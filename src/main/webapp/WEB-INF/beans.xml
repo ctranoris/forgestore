@@ -145,22 +145,11 @@
 	<bean name="fstoreJpaControllerRef" class="eu.forgestore.ws.impl.FStoreJpaController">
 	</bean>
 
-<!-- 
-	<bean id="data_source_h2"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="org.h2.Driver" />
-		<property name="url"
-			value="jdbc:h2:~/.baker/db/bakerdb;CIPHER=AES;AUTO_SERVER=TRUE" />
-		<property name="username" value="bro4xipidb" />
-		<property name="password" value="filepwd bro4xipidb" />
-	</bean>
- -->
-
 
 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-		<property name="persistenceUnitName" value="bakerdb" />
+		<property name="persistenceUnitName" value="forgestoredb" />
 		<property name="jpaVendorAdapter" ref="jpaAdapter" />
 	</bean>
 

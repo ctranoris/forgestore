@@ -12,7 +12,7 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0">
 
-	<persistence-unit name="bakerdb" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="forgestoredb" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
 		</provider>
 		<class>eu.forgestore.ws.model.FStoreUser</class>
@@ -29,9 +29,9 @@
 		<properties>
 			<property name="openjpa.ConnectionDriverName" value="com.mysql.jdbc.Driver" />
 			<property name="openjpa.ConnectionURL"
-				value="jdbc:mysql://localhost/bakerdb" />
-			<property name="openjpa.ConnectionUserName" value="bakerdbuser" />
-			<property name="openjpa.ConnectionPassword" value="b@k3rp@zz" />
+				value="jdbc:mysql://localhost/fsdb" />
+			<property name="openjpa.ConnectionUserName" value="forgestoredbuser" />
+			<property name="openjpa.ConnectionPassword" value="forgestorerp@zz" />
 			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema" />
 			<property name="openjpa.Log" value="none" />
 
@@ -51,7 +51,7 @@
 
 	</persistence-unit>
 
-	<persistence-unit name="bakerdb-test"
+	<persistence-unit name="forgestoredb-test"
 	transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
 		</provider>
@@ -70,9 +70,9 @@
 		<properties>
 			<property name="openjpa.ConnectionDriverName" value="com.mysql.jdbc.Driver" />
 			<property name="openjpa.ConnectionURL"
-				value="jdbc:mysql://localhost/bakerdb_test" />
-			<property name="openjpa.ConnectionUserName" value="bakerdb_testuser" />
-			<property name="openjpa.ConnectionPassword" value="b@k3rp@zz" />
+				value="jdbc:mysql://localhost/forgestoredb_test" />
+			<property name="openjpa.ConnectionUserName" value="fsdb_testuser" />
+			<property name="openjpa.ConnectionPassword" value="forgestorerp@zz" />
 			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema" />
 			<property name="openjpa.Log" value="DefaultLevel=INFO, Runtime=INFO, Tool=INFO, SQL=Trace" />
 
