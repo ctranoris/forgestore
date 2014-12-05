@@ -12,3 +12,4 @@ before_script:
 
   
 language: java
+script: "mvn clean -Pjetty.integration verify"
