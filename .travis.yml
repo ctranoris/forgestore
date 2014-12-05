@@ -1,6 +1,6 @@
 # .travis.yml
 before_script:
-  - mysql -e 'create database bakerdb_test;grant all privileges on bakerdb_test.* to bakerdb_testuser@localhost identified by b@k3rp@zz'
+  - mysql -e 'create database bakerdb_test;grant all privileges on bakerdb_test.* to bakerdb_testuser@localhost identified by "b@k3rp@zz"'
   
   
 language: java
