@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd  http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util.xsd ">
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<context:property-placeholder />
+	<context:annotation-config />
+	<bean
+		class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer" />
+	<bean
+		class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer" />
+
+	<bean id="fstoreRepositoryBean" class="eu.forgestore.ws.repo.FStoreRepository">
+		<property name="fstoreJpaController" ref="fstoreJpaControllerRef" />
+	</bean>
+
+	<jaxrs:server id="services" address="/api/">
+		<jaxrs:serviceBeans>
+
+			<bean class="eu.forgestore.ws.repo.FStoreRepositoryAPIImpl" >
+				<property name="fstoreRepositoryRef" ref="fstoreRepositoryBean" />
+
+			</bean>
+
+		
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
+			<!-- bean class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter"/ -->
+		</jaxrs:providers>
+
+		<jaxrs:inInterceptors>
+			<!-- <ref bean="basicAuthValidator"/> -->
+		</jaxrs:inInterceptors>
+
+
+	</jaxrs:server>
+
+	<bean id="headersOutInterceptor" class="eu.forgestore.ws.util.HeadersOutInterceptor" />
+
+	<!-- We are adding the interceptors to the bus as we will have only one  endpoint/service/bus. -->
+
+	<cxf:bus>
+		<cxf:outInterceptors>
+			<ref bean="headersOutInterceptor" />
+		</cxf:outInterceptors>
+		
+	</cxf:bus>
+	
+	
+	<!-- Apapche Shiro -->
+ 	
+	<!-- 
+	<bean class="eu.forgestore.ws.util.ShiroUTValidator" id="utValidator">
+ 		<property name="securityManager" ref="securityManagerBean"/>
+	</bean>
+	<bean id="basicAuthValidator" class="eu.forgestore.ws.util.ShiroBasicAuthInterceptor">
+		<property name="validator" ref="utValidator" />
+	</bean>
+	 -->
+	<bean class="eu.forgestore.ws.util.AjaxUserFilter" id="ajaxUserFilter">
+	</bean>
+	
+	<bean id="securityManagerBean" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+	    <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
+	    <property name="realm" ref="myRealm"/>
+	    <!-- By default the servlet container sessions will be used.  Uncomment this line
+	         to use shiro's native sessions (see the JavaDoc for more): -->
+	    <!-- <property name="sessionMode" value="native"/> -->
+	    <property name="sessionManager">
+		    <bean class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		    <!-- <property name="sessionIdCookie" ref="cookieBAKERref"></property>  -->
+		    </bean>
+		    
+		  </property>
+	</bean>
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+	
+	<!-- Define the Shiro Realm implementation you want to use to connect to your back-end -->
+	<!-- security datasource: -->
+	<bean id="myRealm" class="eu.forgestore.ws.util.ShiroUTAuthorizingRealm">
+				<property name="fstoreRepositoryRef" ref="fstoreRepositoryBean" />
+	</bean>
+	
+	<!-- 
+	<bean id ="cookieBAKERref" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<property name="name" value="BAKERCOOKIEMAN"></property>
+		<property name="path" value="/"></property>
+	</bean>
+	 -->
+	 
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManagerBean"/>
+        <property name="loginUrl" value="/login.jsp"/>
+        <property name="successUrl" value="/index.html"/>
+        <property name="unauthorizedUrl" value=""/>
+        <!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean
+             defined will be automatically acquired and available via its beanName in chain
+             definitions, but you can perform overrides or parent/child consolidated configuration
+             here if you like: -->
+       <property name="filters">
+        <map>
+            <entry key="userfilter" value-ref="ajaxUserFilter" />
+        </map>
+    	</property>
+        <property name="filterChainDefinitions">
+            <value>
+                # everything else requires authentication:
+                /index.html = anon
+                /mpui/** = anon
+                /viewBunMarketplace.html = anon
+                /viewInstalledBuns.html = anon
+                /services/api/repo/users/example/** = anon, rest
+                /services/api/client/** = anon, rest
+                /services/api/repo/buns/** = anon, rest
+                /services/api/repo/packages/** = anon, rest
+                /services/api/repo/images/** = anon, rest
+                /services/api/repo/sessions/** = anon, rest
+                /services/api/repo/oauth2/** = anon, rest
+                /services/api/repo/categories/** = anon, rest
+                /services/api/repo/apps/** = anon, rest
+                /services/api/repo/widgets/** = anon, rest
+                /services/api/repo/courses/** = anon, rest
+                /services/api/repo/fireadapters/** = anon, rest
+                /services/api/repo/register/** = anon, rest
+                /services/api/repo/fiware/** = userfilter, rest
+                /services/api/repo/properties/** = userfilter, rest
+                /services/api/** = userfilter, rest
+                /admin/logout = logout
+                /admin/viewUsers.html = authc, roles[ROLE_ADMIN]         
+                /admin/** = authc
+                /** = authc
+                
+            </value>
+        </property>
+    </bean>
+	
+
+	<!-- JPA Beans configuration -->
+
+	<bean name="fstoreJpaControllerRef" class="eu.forgestore.ws.impl.FStoreJpaController">
+	</bean>
+
+<!-- 
+	<bean id="data_source_h2"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.h2.Driver" />
+		<property name="url"
+			value="jdbc:h2:~/.baker/db/bakerdb;CIPHER=AES;AUTO_SERVER=TRUE" />
+		<property name="username" value="bro4xipidb" />
+		<property name="password" value="filepwd bro4xipidb" />
+	</bean>
+ -->
+
+
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="bakerdb" />
+		<property name="jpaVendorAdapter" ref="jpaAdapter" />
+	</bean>
+
+	<!-- MySQL -->
+	<bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter">
+		<property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.MySQLDictionary" />
+		<property name="showSql" value="false" />
+		<property name="database" value="MYSQL" />
+		<property name="generateDdl" value="true" />
+	</bean>
+
+	<!-- H2 <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter"> 
+		<property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.H2Dictionary" 
+		/> <property name="showSql" value="false" /> <property name="database" value="H2" 
+		/> <property name="generateDdl" value="true" /> </bean> -->
+
+	<!-- <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"> 
+		<property name="entityManagerFactory" ref="entityManagerFactory" /> < property 
+		name="dataSource" ref="data_source_h2" / > </bean> -->
+
+
+	
+
+	
+
+
+</beans>

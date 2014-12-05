@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	You under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0">
+
+	<persistence-unit name="bakerdb" transaction-type="RESOURCE_LOCAL">
+		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
+		</provider>
+		<class>eu.forgestore.ws.model.FStoreUser</class>
+		<class>eu.forgestore.ws.model.Category</class>
+		<class>eu.forgestore.ws.model.Product</class>
+		<class>eu.forgestore.ws.model.ProductExtensionItem</class>
+		<class>eu.forgestore.ws.model.Widget</class>
+		<class>eu.forgestore.ws.model.Course</class>
+		<class>eu.forgestore.ws.model.FIREAdapter</class>
+		<class>eu.forgestore.ws.model.FStoreProperty</class>
+		
+
+
+		<properties>
+			<property name="openjpa.ConnectionDriverName" value="com.mysql.jdbc.Driver" />
+			<property name="openjpa.ConnectionURL"
+				value="jdbc:mysql://localhost/bakerdb" />
+			<property name="openjpa.ConnectionUserName" value="bakerdbuser" />
+			<property name="openjpa.ConnectionPassword" value="b@k3rp@zz" />
+			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema" />
+			<property name="openjpa.Log" value="none" />
+
+		</properties>
+
+
+		<!-- properties>
+			<property name="openjpa.ConnectionDriverName" value="org.h2.Driver" />
+			<property name="openjpa.ConnectionURL"
+				value="jdbc:h2:~/.baker/db/bakerdb;CIPHER=AES;AUTO_SERVER=TRUE" />
+			<property name="openjpa.ConnectionUserName" value="bakerdb" />
+			<property name="openjpa.ConnectionPassword" value="filepwd bakerdb" />
+			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema" />
+			<property name="openjpa.jdbc.Schema" value="PUBLIC" />
+			<property name="openjpa.Log" value="none" />
+		</properties -->
+
+	</persistence-unit>
+
+	<persistence-unit name="bakerdb-test"
+	transaction-type="RESOURCE_LOCAL">
+		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
+		</provider>
+
+		<class>eu.forgestore.ws.model.FStoreUser</class>
+		<class>eu.forgestore.ws.model.Category</class>
+		<class>eu.forgestore.ws.model.Product</class>
+		<class>eu.forgestore.ws.model.ProductExtensionItem</class>
+		<class>eu.forgestore.ws.model.Widget</class>
+		<class>eu.forgestore.ws.model.Course</class>
+		<class>eu.forgestore.ws.model.FIREAdapter</class>
+		<class>eu.forgestore.ws.model.FStoreProperty</class>
+		
+
+
+		<properties>
+			<property name="openjpa.ConnectionDriverName" value="com.mysql.jdbc.Driver" />
+			<property name="openjpa.ConnectionURL"
+				value="jdbc:mysql://localhost/bakerdb_test" />
+			<property name="openjpa.ConnectionUserName" value="bakerdb_testuser" />
+			<property name="openjpa.ConnectionPassword" value="b@k3rp@zz" />
+			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema" />
+			<property name="openjpa.Log" value="DefaultLevel=INFO, Runtime=INFO, Tool=INFO, SQL=Trace" />
+
+		</properties>
+
+		<!-- properties>
+			<property name="openjpa.ConnectionDriverName" value="org.h2.Driver" />
+			<property name="openjpa.ConnectionURL"
+				value="jdbc:h2:~/.baker/db/bakerdb_test;CIPHER=AES;AUTO_SERVER=TRUE" />
+			<property name="openjpa.ConnectionUserName" value="bakerdb_testuser" />
+			<property name="openjpa.ConnectionPassword" value="filepwd bakerdb_testuserpwd" />
+			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema" />
+			<property name="openjpa.jdbc.Schema" value="PUBLIC" />
+			<property name="openjpa.Log" value="DefaultLevel=INFO, Runtime=INFO, Tool=INFO, SQL=Trace" />
+
+		</properties -->
+		
+	</persistence-unit>
+
+</persistence>
