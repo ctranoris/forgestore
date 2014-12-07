@@ -42,6 +42,7 @@ import java.util.ServiceLoader;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
+import javax.jms.Session;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -619,14 +620,20 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 			AuthenticationToken token =	new UsernamePasswordToken(  userSession.getUsername(), userSession.getPassword());
 			try {
 				currentUser.login(token);
+				
+				
 				FStoreUser u = fstoreRepositoryRef.getUserByUsername( userSession.getUsername() );
 				userSession.setUser( u );				
 				userSession.setPassword("");;//so not tosend in response
+				userSession.setSessionId( currentUser.getSession().getId().toString() );
 				
 				logger.info(" currentUser = " + currentUser.toString() );
 				logger.info( "User [" + currentUser.getPrincipal() + "] logged in successfully." );
 				logger.info(" currentUser  employee  = " + currentUser.hasRole("employee")  );
 				logger.info(" currentUser  boss  = " + currentUser.hasRole("boss")  );
+				
+				
+				userSession = fstoreRepositoryRef.addUserSession(userSession);
 				
 				return Response.ok().entity(userSession).build();
 				}
@@ -693,8 +700,6 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	
 	//Subscribed MAchines related API
 	
-	
-
 	@GET
 	@Path("/categories/")
 	@Produces("application/json")
@@ -702,9 +707,25 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 		return Response.ok().entity(fstoreRepositoryRef.getCategories()).build();
 	}
 
+	
+	
+	@GET
+	@Path("/categories/{catid}")
+	@Produces("application/json")
+	public Response getCategoryById(@PathParam("catid") int catid) {
+		return getAdminCategoryById(catid);
+	}
 
+	@GET
+	@Path("/admin/categories/")
+	@Produces("application/json")
+	public Response getAdminCategories() {
+		return Response.ok().entity(fstoreRepositoryRef.getCategories()).build();
+	}
+	
+	
 	@POST
-	@Path("/categories/")
+	@Path("/admin/categories/")
 	@Produces("application/json")
 	@Consumes("application/json")
 	public Response addCategory(Category c) {
@@ -720,7 +741,7 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	}
 
 	@PUT
-	@Path("/categories/{catid}")
+	@Path("/admin/categories/{catid}")
 	@Produces("application/json")
 	@Consumes("application/json")
 	public Response updateCategory(@PathParam("catid")int catid, Category c) {
@@ -740,7 +761,7 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	}
 
 	@DELETE
-	@Path("/categories/{catid}")
+	@Path("/admin/categories/{catid}")
 	public Response deleteCategory(@PathParam("catid") int catid) {
 		Category category = fstoreRepositoryRef.getCategoryByID(catid);
 		if ((category.getProducts().size()>0) ){
@@ -755,9 +776,9 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 
 
 	@GET
-	@Path("/categories/{catid}")
+	@Path("/admin/categories/{catid}")
 	@Produces("application/json")
-	public Response getCategoryById(@PathParam("catid") int catid) {
+	public Response getAdminCategoryById(@PathParam("catid") int catid) {
 		Category sm = fstoreRepositoryRef.getCategoryByID(catid);
 
 		if (sm != null) {
@@ -780,7 +801,6 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 		return Response.ok().entity(w).build();
 	}
 
-	/////////////WIDGETS related
 
 	@GET
 	@Path("/users/{userid}/widgets")
@@ -843,27 +863,61 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 
 	}
 	
+	
+	
 	@GET
-	@Path("/users/{userid}/widgets/{widgetid}")
+	@Path("/admin/widgets")
 	@Produces("application/json")
-	public Response getWidgetofUser(@PathParam("userid")int userid, @PathParam("widgetid")int widgetid) {
-		logger.info("getWidgetofUser for userid: " + userid + ", widgetid=" + widgetid);
-		FStoreUser u = fstoreRepositoryRef.getUserByID(userid);
+	public Response getWidgetsAdmin() {		
+		
+		//must show only widgets owned by user Session. must find user from sessionid
+		
+		FStoreUser u = fstoreRepositoryRef.getUserBySessionId( SecurityUtils.getSubject().getSession().getId().toString() );
+		
+		if (u==null){
+			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
+			builder.entity("User session not found in fstore registry");
+			throw new WebApplicationException(builder.build());
+		}
+		
+		List<Widget> w ;
+		
+		if ( u.getRole().equals("ROLE_ADMIN") ) //an admin will see everything
+			w = fstoreRepositoryRef.getWidgets(null);
+		else
+			w = fstoreRepositoryRef.getUserWidgets(u);
+		
+		return Response.ok().entity(w).build();
+	}
+	
+	@GET
+	@Path("/admin/widgets/{widgetid}")
+	@Produces("application/json")
 
-		if (u != null) {
-			Widget w = (Widget) u.getProductById(widgetid);
+	public Response getWidgetAdminByID(@PathParam("widgetid") int widgetid) {
+		logger.info("getWidgetByID  widgetid=" + widgetid);
+		Widget w = (Widget) fstoreRepositoryRef.getProductByID(widgetid);
+
+		if (w != null) {
 			return Response.ok().entity(w).build();
 		} else {
 			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
-			builder.entity("User with id=" + userid + " not found in fstore registry");
+			builder.entity("widget with id=" + widgetid + " not found in fstore registry");
 			throw new WebApplicationException(builder.build());
 		}
 	}
 
+
 	@PUT
-	@Path("/widgets/{wid}")
+	@Path("/admin/widgets/{wid}")
 	@Consumes("multipart/form-data")
 	public Response updateWidget(@PathParam("wid") int wid, List<Attachment> ats){
+		
+
+		//must show allow widges owned by user Session. must find user from sessionid
+		
+		FStoreUser u = fstoreRepositoryRef.getUserBySessionId( SecurityUtils.getSubject().getSession().getId().toString() );
+		
 		
 		Widget appmeta = (Widget) fstoreRepositoryRef.getProductByID(wid);
 		appmeta.setURL(getAttachmentStringValue("url", ats));
@@ -886,11 +940,18 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	}
 
 	@POST
-	@Path("/users/{userid}/widgets/")
+	//@Path("/users/{userid}/widgets/")
+	@Path("/admin/widgets/")
 	@Consumes("multipart/form-data")
-	public Response addWidget( @PathParam("userid") int userid, List<Attachment> ats){
+	public Response addWidget(  List<Attachment> ats){
 		
+//		MUST STORE Sessions and the from Session ID to get userid
+//		must show only widges owned by user Session. must find user from sessionid
 
+
+		FStoreUser u = fstoreRepositoryRef.getUserBySessionId( SecurityUtils.getSubject().getSession().getId().toString() );
+		int userid = u.getId();
+		
 		Widget sm = new Widget();
 		sm.setURL(  getAttachmentStringValue("url", ats) );
 		sm = (Widget) addNewProductData(sm, userid, 
@@ -908,24 +969,16 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	
 
 	@DELETE
-	@Path("/widgets/{widgetid}")
+	@Path("/admin/widgets/{widgetid}")
 	public void deleteWidget(@PathParam("widgetid") int widgetid) {
+		
+
+		//must allow only widget to delete owned by user Session. must find user from sessionid
+		
 		fstoreRepositoryRef.deleteProduct(widgetid);
 		
 	}
 
-	@DELETE
-	@Path("/apps/{appid}")
-	public void deleteApp(@PathParam("appid") int appid) {
-		fstoreRepositoryRef.deleteProduct(appid);
-		
-	}
-	
-	@DELETE
-	@Path("/buns/{bunid}")
-	public void deleteBun(@PathParam("bunid") int bunid) {
-		fstoreRepositoryRef.deleteProduct(bunid);
-	}
 
 	@DELETE
 	@Path("/courses/{courseid}")

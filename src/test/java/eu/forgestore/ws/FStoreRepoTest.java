@@ -46,16 +46,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class FStoreRepoTest {
 
 	@Autowired
-	private  FStoreJpaController bakerJpaControllerTest;
+	private  FStoreJpaController fstoreJpaControllerTest;
 
 	// private static final transient Log logger = LogFactory.getLog(BakerRepoTest.class.getName());
 
 	@Before
 	public void deletePreviousobjectsDB() {
 
-		bakerJpaControllerTest.deleteAllProducts();
-		bakerJpaControllerTest.deleteAllUsers();
-		bakerJpaControllerTest.deleteAllCategories();
+		fstoreJpaControllerTest.deleteAllProducts();
+		fstoreJpaControllerTest.deleteAllUsers();
+		fstoreJpaControllerTest.deleteAllCategories();
 		
 
 	}
@@ -63,7 +63,7 @@ public class FStoreRepoTest {
 	@Test
 	public void testWriteReadDB() {
 
-		bakerJpaControllerTest.getAllProductsPrinted();
+		fstoreJpaControllerTest.getAllProductsPrinted();
 		
 		FStoreUser bu = new FStoreUser();
 		bu.setOrganization("UoP");
@@ -72,7 +72,7 @@ public class FStoreRepoTest {
 		bu.setPassword("apassword");
 		bu.setEmail("e@e.com");
 
-		bakerJpaControllerTest.saveUser(bu);
+		fstoreJpaControllerTest.saveUser(bu);
 		
 		Widget bmeta = new Widget();
 		bmeta.setName("abun");
@@ -83,14 +83,14 @@ public class FStoreRepoTest {
 		bmeta.setPackageLocation("packageLocation");
 		bu.addProduct(bmeta);
 
-		bakerJpaControllerTest.updateFStoreUser(bu);
+		fstoreJpaControllerTest.updateFStoreUser(bu);
 		
 		// change name and reSave
-		bmeta = (Widget) bakerJpaControllerTest.readProductByUUID(uuid);
+		bmeta = (Widget) fstoreJpaControllerTest.readProductByUUID(uuid);
 		bmeta.setName("NewBunName");
-		bakerJpaControllerTest.updateProduct(bmeta);		
+		fstoreJpaControllerTest.updateProduct(bmeta);		
 
-		bakerJpaControllerTest.getAllProductsPrinted();
+		fstoreJpaControllerTest.getAllProductsPrinted();
 		
 		bmeta = new Widget();
 		String uuid2 = UUID.randomUUID().toString();
@@ -99,23 +99,23 @@ public class FStoreRepoTest {
 		bmeta.setLongDescription("longDescription2");
 		bmeta.setShortDescription("shortDescription2");
 		bmeta.setPackageLocation("packageLocation2");
-		bu = bakerJpaControllerTest.readFStoreUserByUsername("ausername");
+		bu = fstoreJpaControllerTest.readFStoreUserByUsername("ausername");
 		bu.addProduct(bmeta);
 
-		bakerJpaControllerTest.updateFStoreUser(bu);
+		fstoreJpaControllerTest.updateFStoreUser(bu);
 
-		FStoreUser testbu = bakerJpaControllerTest.readFStoreUserByUsername("ausername");
+		FStoreUser testbu = fstoreJpaControllerTest.readFStoreUserByUsername("ausername");
 		assertEquals("aname", testbu.getName());
 		assertEquals(EncryptionUtil.hash("apassword"), testbu.getPassword());
 		assertEquals("UoP", testbu.getOrganization());
 		assertEquals("e@e.com", testbu.getEmail());
 
 
-		bakerJpaControllerTest.getAllProductsPrinted();
+		fstoreJpaControllerTest.getAllProductsPrinted();
 		
 		assertEquals(2, testbu.getProducts().size());
 
-		Widget testbm = (Widget) bakerJpaControllerTest.readProductByUUID(uuid);
+		Widget testbm = (Widget) fstoreJpaControllerTest.readProductByUUID(uuid);
 		assertEquals("NewBunName", testbm.getName());
 		assertEquals(uuid, testbm.getUuid());
 		assertNotNull(testbm.getOwner());
@@ -127,9 +127,9 @@ public class FStoreRepoTest {
 		bu.setUsername("ausername2");
 		bu.setPassword("apassword2");
 
-		bakerJpaControllerTest.saveUser(bu);
-		bakerJpaControllerTest.getAllUsersPrinted();
-		assertEquals(2, bakerJpaControllerTest.countUsers());
+		fstoreJpaControllerTest.saveUser(bu);
+		fstoreJpaControllerTest.getAllUsersPrinted();
+		assertEquals(2, fstoreJpaControllerTest.countUsers());
 
 	}
 
@@ -164,11 +164,11 @@ public class FStoreRepoTest {
 		appmeta.addExtensionItem(item2 );
 		bu.addProduct(appmeta);
 
-		bakerJpaControllerTest.saveUser(bu);
+		fstoreJpaControllerTest.saveUser(bu);
 
 		// change name and reSave
 		appmeta.setName("NewAppName");
-		bakerJpaControllerTest.updateProduct(appmeta);
+		fstoreJpaControllerTest.updateProduct(appmeta);
 		assertEquals(2, appmeta.getCategories().size() );
 		assertEquals(2, appmeta.getExtensions().size() );
 
@@ -180,18 +180,18 @@ public class FStoreRepoTest {
 		appmeta2.addCategory(c);
 		bu.addProduct(appmeta2);
 
-		bakerJpaControllerTest.updateFStoreUser(bu);
-		bakerJpaControllerTest.getAllUsersPrinted();
+		fstoreJpaControllerTest.updateFStoreUser(bu);
+		fstoreJpaControllerTest.getAllUsersPrinted();
 
-		FStoreUser testbu = bakerJpaControllerTest.readFStoreUserByUsername("ausername");
+		FStoreUser testbu = fstoreJpaControllerTest.readFStoreUserByUsername("ausername");
 		assertEquals(2, testbu.getProducts().size());
 
-		Course testApp = (Course) bakerJpaControllerTest.readProductByUUID(uuid);
+		Course testApp = (Course) fstoreJpaControllerTest.readProductByUUID(uuid);
 		assertEquals("NewAppName", testApp.getName());
 		assertEquals(uuid, testApp.getUuid());
 		assertNotNull(testApp.getOwner());
 		assertEquals("ausername", testApp.getOwner().getUsername());
-		bakerJpaControllerTest.getAllCategoriesPrinted();
+		fstoreJpaControllerTest.getAllCategoriesPrinted();
 		assertEquals("acat1", testApp.getCategories().get(0).getName());
 
 

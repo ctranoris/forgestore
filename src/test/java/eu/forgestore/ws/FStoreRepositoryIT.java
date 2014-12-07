@@ -17,6 +17,7 @@ package eu.forgestore.ws;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import eu.forgestore.ws.model.Category;
 import eu.forgestore.ws.model.FStoreUser;
 import eu.forgestore.ws.model.UserSession;
 import eu.forgestore.ws.util.EncryptionUtil;
@@ -46,7 +47,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 //RUN a single Integration Test only, but runs all unit tests
-//mvn clean -Pjetty.integration -Dit.test=BakerRepositoryIT verify
+//mvn clean -Pjetty.integration -Dit.test=FStoreRepositoryIT verify
 
 public class FStoreRepositoryIT {
 
@@ -78,7 +79,7 @@ public class FStoreRepositoryIT {
 	}
 
 	@Test
-	public void testManagementOfRepo() throws Exception {
+	public void testManagementOfUsersInRepo() throws Exception {
 		List<FStoreUser> busers = getUsers();
 		int initialBakerUserList = busers.size();
 		FStoreUser bu = new FStoreUser();
@@ -136,17 +137,24 @@ public class FStoreRepositoryIT {
 		deleteUserById(retBU.getId());
 
 		assertEquals(initialBakerUserList , getUsers().size());
-		
 
 	}
-
+	
+	
 	private void deleteUserById(int id) {
 		List<Object> providers = new ArrayList<Object>();
 		providers.add(new org.codehaus.jackson.jaxrs.JacksonJsonProvider());
 
-		WebClient client = WebClient.create(endpointUrl + "/services/api/repo/users/" + id, providers);
-		client.cookie(cookieJSESSIONID);
+		//without session cookie first! SHould return 401 (UNAUTHORIZED)
+		WebClient client = WebClient.create(endpointUrl + "/services/api/repo/users"+ id, providers);
 		Response r = client.accept("application/json").type("application/json").delete();
+		assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), r.getStatus());
+				
+		//again with session cookie
+				
+		client = WebClient.create(endpointUrl + "/services/api/repo/users/" + id, providers);
+		client.cookie(cookieJSESSIONID);
+		r = client.accept("application/json").type("application/json").delete();
 		assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
 		
 	}
@@ -155,9 +163,15 @@ public class FStoreRepositoryIT {
 		List<Object> providers = new ArrayList<Object>();
 		providers.add(new org.codehaus.jackson.jaxrs.JacksonJsonProvider());
 
-		WebClient client = WebClient.create(endpointUrl + "/services/api/repo/users/" + id, providers);
-		client.cookie(cookieJSESSIONID);
+		//without session cookie first! SHould return 401 (UNAUTHORIZED)
+		WebClient client = WebClient.create(endpointUrl + "/services/api/repo/users"+ id, providers);
 		Response r = client.accept("application/json").type("application/json").put(bu);
+		assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), r.getStatus());
+				
+		//again with session cookie
+		client = WebClient.create(endpointUrl + "/services/api/repo/users/" + id, providers);
+		client.cookie(cookieJSESSIONID);
+		 r = client.accept("application/json").type("application/json").put(bu);
 		assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
 
 		MappingJsonFactory factory = new MappingJsonFactory();
@@ -170,6 +184,12 @@ public class FStoreRepositoryIT {
 		List<Object> providers = new ArrayList<Object>();
 		providers.add(new org.codehaus.jackson.jaxrs.JacksonJsonProvider());
 
+		//without session cookie first! SHould return 401 (UNAUTHORIZED)
+		WebClient clientX = WebClient.create(endpointUrl + "/services/api/repo/users/" + id, providers);
+		Response rX = clientX.accept("application/json").type("application/json").get();
+		assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), rX.getStatus());
+		
+		
 		WebClient client = WebClient.create(endpointUrl + "/services/api/repo/users/" + id, providers);
 		client.cookie(cookieJSESSIONID);
 		Response r = client.accept("application/json").type("application/json").get();
@@ -259,17 +279,88 @@ public class FStoreRepositoryIT {
 		Response r = client.accept("application/json").type("application/json").get();
 		return r;
 	}
+	
+	
+	private Response execGETonURL(String url) {
+		List<Object> providers = new ArrayList<Object>();
+		providers.add(new org.codehaus.jackson.jaxrs.JacksonJsonProvider());
 
-//	private Response execGETonURL(String url) {
-//		List<Object> providers = new ArrayList<Object>();
-//		providers.add(new org.codehaus.jackson.jaxrs.JacksonJsonProvider());
-//
-//		WebClient client = WebClient.create(url, providers);
-//		Cookie cookie = new Cookie("X-Baker-Key", "123456") ;
-//		client.cookie(cookie );
-//		
-//		Response r = client.accept("application/json").type("application/json").get();
-//		return r;
-//	}
+		WebClient client = WebClient.create(url, providers);
+
+		Response r = client.accept("application/json").type("application/json").get();
+		return r;
+	}
+	
+	
+	
+
+	@Test
+	public void testManagementOfCategoriesInRepo() throws Exception {
+		List<Category> cl = getCategories();
+		int initialCatList = cl.size();
+		Category c = new Category();
+		c.setName("ATESTCATEG");
+		
+		// add a category...
+		Category retC = addCategory(c);
+		assertNotNull(c.getId());
+		assertEquals(c.getName(), retC.getName());
+
+		// should be one more category in the DB
+		assertEquals(initialCatList + 1, getCategories().size());
+
+	}
+
+	private Category addCategory(Category c) throws JsonParseException, IOException {
+
+		List<Object> providers = new ArrayList<Object>();
+		providers.add(new org.codehaus.jackson.jaxrs.JacksonJsonProvider());
+		
+		//without session cookie first! SHould return 401 (UNAUTHORIZED)
+		WebClient client = WebClient.create(endpointUrl + "/services/api/repo/admin/categories", providers);
+		Response r = client.accept("application/json").type("application/json").post(c);
+		assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), r.getStatus());
+		
+		//again with session cookie
+
+		client = WebClient.create(endpointUrl + "/services/api/repo/admin/categories", providers);
+		client.cookie(cookieJSESSIONID);
+		r = client.accept("application/json").type("application/json").post(c);
+		assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+		
+		MappingJsonFactory factory = new MappingJsonFactory();
+		JsonParser parser = factory.createJsonParser((InputStream) r.getEntity());
+		Category output = parser.readValueAs(Category.class);
+		return output;
+	}
+
+	
+
+	
+	public List<Category> getCategories() throws Exception {
+
+		logger.info("Executing TEST = getCategories");
+
+		
+		Response r = execGETonURL(endpointUrl + "/services/api/repo/categories");
+		assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+
+		String bakerAPIVersionListHeaders = (String) r.getHeaders().getFirst("X-Baker-API-Version");
+		assertEquals("1.0.0", bakerAPIVersionListHeaders);
+
+		MappingJsonFactory factory = new MappingJsonFactory();
+		JsonParser parser = factory.createJsonParser((InputStream) r.getEntity());
+
+		JsonNode node = parser.readValueAsTree();
+		ObjectMapper mapper = new ObjectMapper();
+		TypeReference<List<Category>> typeRef = new TypeReference<List<Category>>() {
+		};
+		List<Category> categoryList = mapper.readValue(node.traverse(), typeRef);
+		for (Category f : categoryList) {
+			logger.info("Category = " + f.getName() + ", ID = " + f.getId());
+		}
+
+		return categoryList;
+	}
 
 }

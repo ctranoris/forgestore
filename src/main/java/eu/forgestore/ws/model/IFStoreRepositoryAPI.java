@@ -55,9 +55,8 @@ public interface IFStoreRepositoryAPI {
 	Response getWidgets(Long categoryid);
 	Response getWidgetByID(int appid);
 	Response getWidgetUUID(String uuid);		
-	Response getWidgetofUser( int userid, int widgetid);
 	Response updateWidget(int aid,  List<Attachment> attachements);
-	Response addWidget(int userid,  List<Attachment> attachements);
+	Response addWidget(List<Attachment> attachements);
 	void deleteWidget(int appid);
 	
 	//courses Related API methods

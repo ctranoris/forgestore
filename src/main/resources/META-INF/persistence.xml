@@ -23,6 +23,7 @@
 		<class>eu.forgestore.ws.model.Course</class>
 		<class>eu.forgestore.ws.model.FIREAdapter</class>
 		<class>eu.forgestore.ws.model.FStoreProperty</class>
+		<class>eu.forgestore.ws.model.UserSession</class>
 		
 
 
@@ -64,6 +65,7 @@
 		<class>eu.forgestore.ws.model.Course</class>
 		<class>eu.forgestore.ws.model.FIREAdapter</class>
 		<class>eu.forgestore.ws.model.FStoreProperty</class>
+		<class>eu.forgestore.ws.model.UserSession</class>
 		
 
 

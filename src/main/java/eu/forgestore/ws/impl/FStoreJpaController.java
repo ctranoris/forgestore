@@ -21,6 +21,7 @@ import eu.forgestore.ws.model.Category;
 import eu.forgestore.ws.model.Course;
 import eu.forgestore.ws.model.FIREAdapter;
 import eu.forgestore.ws.model.Product;
+import eu.forgestore.ws.model.UserSession;
 import eu.forgestore.ws.model.Widget;
 
 import java.util.Iterator;
@@ -187,11 +188,12 @@ public class FStoreJpaController {
 	}
 
 	
-	public FStoreUser readFStoreUserById(int userid) {
+	public FStoreUser readFStoreUserById(long l) {
+		
 		
 		
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		return entityManager.find(FStoreUser.class, userid);
+		return entityManager.find(FStoreUser.class, l);
 		
 //		Query q = entityManager.createQuery("SELECT m FROM FStoreUser m WHERE m.id=" + userid );		
 //		return (q.getResultList().size()==0)?null:(FStoreUser) q.getSingleResult();
@@ -482,6 +484,20 @@ public class FStoreJpaController {
 		return q.getResultList();
 	}
 
+
+	public List<Widget> readWidgetMetadataByOwnerId(int userid,  int firstResult, int maxResults) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		Query q;
+		
+			q = entityManager.createQuery("SELECT a FROM Widget a WHERE a.owner.id="+userid+" ORDER BY a.id");
+
+		q.setFirstResult(firstResult);
+		q.setMaxResults(maxResults);
+		return q.getResultList();
+	}
+	
+	
+	
 	public List<Course> readCoursesMetadata(Long categoryid, int firstResult, int maxResults) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		Query q;
@@ -559,6 +575,38 @@ public class FStoreJpaController {
 		return u;
 
 	}
+
+	public UserSession saveUserSession(UserSession userSession) {
+		logger.info("Will userSession = " + userSession.getUsername() );
+
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+
+		EntityTransaction entityTransaction = entityManager.getTransaction();
+		entityTransaction.begin();
+
+		FStoreUser u = entityManager.find(FStoreUser.class, userSession.getUser().getId());
+		userSession.setUser(u);
+
+		logger.info("Will userSession = " + u.toString() );
+
+		entityManager.persist(u);
+		entityManager.persist(userSession);
+		entityManager.flush();
+		entityTransaction.commit();
+		
+		return userSession;
+		
+	}
+
+	public UserSession readUserBySessionId(String sessionId) {
+		
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+
+		Query q = entityManager.createQuery("SELECT m FROM UserSession m WHERE m.sessionId='" + sessionId + "'");
+		return (q.getResultList().size()==0)?null:(UserSession) q.getSingleResult();
+		
+	}
+
 
 	
 

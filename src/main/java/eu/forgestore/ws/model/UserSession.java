@@ -15,12 +15,31 @@
 
 package eu.forgestore.ws.model;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 
+
+@Entity
 public class UserSession {
 
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id = 0;
 	private String username = null;
 	private String password = null;
+	private String sessionId = null;
+	
+
+	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@JoinColumns({ @JoinColumn() })
 	private FStoreUser user = null;
 	
 	
@@ -45,6 +64,22 @@ public class UserSession {
 	}
 	public void setUser(FStoreUser user) {
 		this.user = user;
+	}
+	
+	
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	
+	
+	public String getSessionId() {
+		return sessionId;
+	}
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 	
 }

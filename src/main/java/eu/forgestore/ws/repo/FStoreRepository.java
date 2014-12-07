@@ -22,6 +22,7 @@ import eu.forgestore.ws.model.Category;
 import eu.forgestore.ws.model.Course;
 import eu.forgestore.ws.model.FIREAdapter;
 import eu.forgestore.ws.model.Product;
+import eu.forgestore.ws.model.UserSession;
 import eu.forgestore.ws.model.Widget;
 
 import java.util.Collection;
@@ -173,6 +174,12 @@ public class FStoreRepository {
 		List<Widget> ls = fstoreJpaController.readWidgetMetadata(categoryid, 0, 100000);		
 		return ls;
 	}
+	
+
+	public List<Widget> getUserWidgets(FStoreUser u) {
+		List<Widget> ls = fstoreJpaController.readWidgetMetadataByOwnerId(u.getId(), 0, 100000);	
+		return ls;
+	}
 
 
 	public List<Course> getCourses(Long categoryid) {
@@ -218,4 +225,22 @@ public class FStoreRepository {
 	public FStoreProperty getPropertyByID(int propid) {
 		return fstoreJpaController.readPropertyByID(propid);
 	}
+
+
+	public UserSession addUserSession(UserSession userSession) {
+		fstoreJpaController.saveUserSession(userSession);
+		return userSession;
+		
+	}
+
+
+	public FStoreUser getUserBySessionId(String sessionId) {
+		UserSession u = fstoreJpaController.readUserBySessionId(sessionId);
+		if (u !=null)
+			return u.getUser();
+		
+		return  null;
+	}
+
+
 }
