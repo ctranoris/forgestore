@@ -15,9 +15,6 @@
 
 package eu.forgestore.ws.model;
 
-import eu.forgestore.ws.util.EncryptionUtil;
-
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,18 +27,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
-import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.shiro.codec.CodecSupport;
-import org.apache.shiro.crypto.AesCipherService;
-import org.apache.shiro.crypto.hash.DefaultHashService;
-import org.apache.shiro.crypto.hash.Hash;
-import org.apache.shiro.crypto.hash.HashRequest;
-import org.apache.shiro.crypto.hash.SimpleHashRequest;
-import org.apache.shiro.util.ByteSource;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonIgnoreType;
+
+import eu.forgestore.ws.util.EncryptionUtil;
 
 @Entity(name = "FStoreUser")
 @JsonIgnoreProperties(value = { "products" })
@@ -184,7 +173,8 @@ public class FStoreUser {
 		this.username = username;
 	}
 
-	public String getPassword() {
+	
+	public String passwordValue() {
 		return password;
 	}
 

@@ -414,6 +414,7 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 		FStoreUser bunOwner = fstoreRepositoryRef.getUserByID(userid);
 		bunOwner.addProduct(prod);
 		fstoreRepositoryRef.updateUserInfo(userid, bunOwner);
+		prod = fstoreRepositoryRef.getProductByUUID(prod.getUuid() );//will reload to get ID for response
 		return prod;
 	}
 
@@ -911,6 +912,7 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	@PUT
 	@Path("/admin/widgets/{wid}")
 	@Consumes("multipart/form-data")
+	@Produces("application/json")
 	public Response updateWidget(@PathParam("wid") int wid, List<Attachment> ats){
 		
 
@@ -943,6 +945,7 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	//@Path("/users/{userid}/widgets/")
 	@Path("/admin/widgets/")
 	@Consumes("multipart/form-data")
+	@Produces("application/json")
 	public Response addWidget(  List<Attachment> ats){
 		
 //		MUST STORE Sessions and the from Session ID to get userid

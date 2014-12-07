@@ -106,7 +106,7 @@ public class FStoreRepoTest {
 
 		FStoreUser testbu = fstoreJpaControllerTest.readFStoreUserByUsername("ausername");
 		assertEquals("aname", testbu.getName());
-		assertEquals(EncryptionUtil.hash("apassword"), testbu.getPassword());
+		assertEquals(EncryptionUtil.hash("apassword"), testbu.passwordValue());
 		assertEquals("UoP", testbu.getOrganization());
 		assertEquals("e@e.com", testbu.getEmail());
 

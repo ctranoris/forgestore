@@ -98,7 +98,7 @@ public class ShiroUTAuthorizingRealm extends AuthorizingRealm {
 			throw new AuthenticationException("Sorry! No login for you.");			
 		}
 
-		String originalPass = bu.getPassword();
+		String originalPass = bu.passwordValue();
 		String suppliedPass = EncryptionUtil.hash(   String.valueOf(token.getPassword())  );
 		logger.info("originalPass =" + originalPass );
 		logger.info("suppliedPass =" + suppliedPass );
