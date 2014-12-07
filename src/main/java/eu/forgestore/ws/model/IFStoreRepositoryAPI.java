@@ -62,19 +62,15 @@ public interface IFStoreRepositoryAPI {
 	//courses Related API methods
 	Response getCourses(Long categoryid);
 	Response getCoursetByID(int courseid);
-	Response getCourseUUID(String uuid);		
-	Response getCourseofUser( int userid, int courseid);
 	Response updateCourse(int cid,  List<Attachment> attachements);
-	Response addCourse(int userid,  List<Attachment> attachements);
+	Response addCourse( List<Attachment> attachements);
 	void deleteCourse(int courseid);
 	
 	//FIREAdapters related API methods
 	Response getFIREAdapters(Long categoryid);
-	Response getFIREAdapterByID(int faid);
-	Response getFIREAdapterByUUID(String uuid);		
-	Response getFIREAdapterofUser( int userid, int faid);	
+	Response getFIREAdapterByID(int faid);	
 	Response updateFIREAdapter(int faid, List<Attachment> attachements);
-	Response addFIREAdapter(int userid,  List<Attachment> attachements);
+	Response addFIREAdapter( List<Attachment> attachements);
 	void deleteFIREAdapter( int faid);
 	
 }

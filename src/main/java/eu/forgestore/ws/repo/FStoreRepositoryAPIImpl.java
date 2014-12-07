@@ -979,13 +979,8 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 		
 	}
 
-
-	@DELETE
-	@Path("/courses/{courseid}")
-	public void deleteCourse(@PathParam("courseid") int courseid) {
-		fstoreRepositoryRef.deleteProduct(courseid);
-	}
-
+	/**************Courses API*****************************/
+	
 	@GET
 	@Path("/courses")
 	@Produces("application/json")
@@ -994,8 +989,7 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 		List<Course> courses = fstoreRepositoryRef.getCourses(categoryid);
 		return Response.ok().entity(courses).build();
 	}
-
-
+	
 	@GET
 	@Path("/courses/{courseid}")
 	@Produces("application/json")
@@ -1011,28 +1005,61 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 			throw new WebApplicationException(builder.build());
 		}
 	}
+	
+	
+	@DELETE
+	@Path("/admin/courses/{courseid}")
+	public void deleteCourse(@PathParam("courseid") int courseid) {
+		fstoreRepositoryRef.deleteProduct(courseid);
+	}
+
+	@GET
+	@Path("/admin/courses")
+	@Produces("application/json")
+	public Response getCoursesAdmin() {
+		
+		//must show only widgets owned by user Session. must find user from sessionid
+		
+		FStoreUser u = fstoreRepositoryRef.getUserBySessionId( SecurityUtils.getSubject().getSession().getId().toString() );
+		
+		if (u==null){
+			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
+			builder.entity("User session not found in fstore registry");
+			throw new WebApplicationException(builder.build());
+		}
+		
+		List<Course> c ;
+		
+		if ( u.getRole().equals("ROLE_ADMIN") ) //an admin will see everything
+			c = fstoreRepositoryRef.getCourses(null);
+		else
+			c = fstoreRepositoryRef.getUserCourses(u);
+
+		return Response.ok().entity(c).build();
+		
+				
+	}
 
 
 	@GET
-	@Path("/courses/uuid/{uuid}")
+	@Path("/admin/courses/{courseid}")
 	@Produces("application/json")
-	public Response getCourseUUID(@PathParam("uuid") String uuid) {
+	public Response getCourseAdminByID(@PathParam("courseid") int courseid) {
+		logger.info("getCoursetByID  courseid=" + courseid);
+		Course c = (Course) fstoreRepositoryRef.getProductByID(courseid);
 
-		Course c = (Course) fstoreRepositoryRef.getProductByUUID(uuid);
 		if (c != null) {
 			return Response.ok().entity(c).build();
 		} else {
 			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
-			builder.entity("Course with uuid=" + uuid + " not found in local registry");
+			builder.entity("Course with id=" + courseid + " not found in fstore registry");
 			throw new WebApplicationException(builder.build());
 		}
 	}
 
 
-
-
 	@PUT
-	@Path("/courses/{cid}")
+	@Path("/admin/courses/{cid}")
 	@Consumes("multipart/form-data")
 	public Response updateCourse(
 			@PathParam("cid") int cid, 
@@ -1059,9 +1086,14 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	
 
 	@POST
-	@Path("/users/{userid}/courses/")
+	@Path("/admin/courses/")
 	@Consumes("multipart/form-data")
-	public Response addCourse(@PathParam("userid") int userid, List<Attachment> ats){
+	public Response addCourse( List<Attachment> ats){
+		
+		FStoreUser u = fstoreRepositoryRef.getUserBySessionId( SecurityUtils.getSubject().getSession().getId().toString() );
+		int userid = u.getId();
+		
+		
 		Course c = new Course();
 		c = (Course) addNewProductData(c, userid, 
 				getAttachmentStringValue("prodname", ats), 
@@ -1077,25 +1109,6 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	}
 
 
-
-	@GET
-	@Path("/users/{userid}/courses/{courseid}")
-	@Produces("application/json")
-	public Response getCourseofUser(
-			@PathParam("userid") int userid, 
-			@PathParam("courseid") int courseid) {
-		logger.info("getCourseofUser for userid: " + userid + ", courseid=" + courseid);
-		FStoreUser u = fstoreRepositoryRef.getUserByID(userid);
-
-		if (u != null) {
-			Course course = (Course) u.getProductById(courseid);
-			return Response.ok().entity(course).build();
-		} else {
-			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
-			builder.entity("User with id=" + userid + " not found in fstore registry");
-			throw new WebApplicationException(builder.build());
-		}
-	}
 	
 	@GET
 	@Path("/users/{userid}/courses")
@@ -1233,7 +1246,51 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 
 
 	@GET
-	@Path("/fireadapters/uuid/{uuid}")
+	@Path("/admin/fireadapters")
+	@Produces("application/json")
+	public Response getFIREAdaptersAdmin() {
+
+		//must show only widgets owned by user Session. must find user from sessionid
+		
+		FStoreUser u = fstoreRepositoryRef.getUserBySessionId( SecurityUtils.getSubject().getSession().getId().toString() );
+		
+		if (u==null){
+			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
+			builder.entity("User session not found in fstore registry");
+			throw new WebApplicationException(builder.build());
+		}
+		
+		List<FIREAdapter> adapters ;
+		
+		if ( u.getRole().equals("ROLE_ADMIN") ) //an admin will see everything
+			adapters = fstoreRepositoryRef.getFIREAdapters(null);
+		else
+			adapters = fstoreRepositoryRef.getUserFIREAdapters(u);
+
+		return Response.ok().entity( adapters ).build();
+				
+				
+	}
+
+
+	@GET
+	@Path("/admin/fireadapters/{faid}")
+	@Produces("application/json")
+	public Response getFIREAdapteAdminrByID( @PathParam("faid") int faid) {
+		logger.info("getFIREAdapterByID  faid=" + faid);
+		FIREAdapter bun = (FIREAdapter) fstoreRepositoryRef.getProductByID(faid);
+
+		if (bun != null) {
+			return Response.ok().entity(bun).build();
+		} else {
+			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
+			builder.entity("FIREAdapter with id=" + faid + " not found in fstore registry");
+			throw new WebApplicationException(builder.build());
+		}
+	}
+	
+	@GET
+	@Path("/admin/fireadapters/uuid/{uuid}")
 	@Produces("application/json")
 	public Response getFIREAdapterByUUID(@PathParam("uuid") String uuid) {
 		logger.info("Received GET for FIREAdapter uuid: " + uuid);
@@ -1250,28 +1307,8 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	}
 
 
-
-	@GET
-	@Path("/users/{userid}/fireadapters/{faid}")
-	@Produces("application/json")
-	public Response getFIREAdapterofUser(@PathParam("userid") int userid, @PathParam("faid") int faid) {
-		logger.info("getFIREAdapterofUser for userid: " + userid + ", faid=" + faid);
-		FStoreUser u = fstoreRepositoryRef.getUserByID(userid);
-
-		if (u != null) {
-			FIREAdapter adapter = (FIREAdapter) u.getProductById(faid);
-			return Response.ok().entity(adapter).build();
-		} else {
-			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
-			builder.entity("User with id=" + userid + " not found in fstore registry");
-			throw new WebApplicationException(builder.build());
-		}
-	}
-	
-
-
 	@PUT
-	@Path("/fireadapters/{faid}")
+	@Path("/admin/fireadapters/{faid}")
 	@Consumes("multipart/form-data")
 	public Response updateFIREAdapter(@PathParam("faid") int faid,  List<Attachment> ats){
 
@@ -1296,9 +1333,12 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	}
 
 	@POST
-	@Path("/users/{userid}/fireadapters/")
+	@Path("/admin/fireadapters/")
 	@Consumes("multipart/form-data")	
-	public Response addFIREAdapter( @PathParam("userid") int userid, List<Attachment> ats){
+	public Response addFIREAdapter(  List<Attachment> ats){
+
+		FStoreUser u = fstoreRepositoryRef.getUserBySessionId( SecurityUtils.getSubject().getSession().getId().toString() );
+		int userid = u.getId();
 		
 		FIREAdapter sm = new FIREAdapter();
 		sm = (FIREAdapter) addNewProductData(sm, userid, 
@@ -1316,7 +1356,7 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 	}
 
 	@DELETE
-	@Path("/fireadapters/{faid}")
+	@Path("/admin/fireadapters/{faid}")
 	public void deleteFIREAdapter( @PathParam("faid") int faid) {
 		fstoreRepositoryRef.deleteProduct(faid);
 	}

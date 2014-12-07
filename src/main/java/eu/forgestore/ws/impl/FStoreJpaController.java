@@ -607,6 +607,28 @@ public class FStoreJpaController {
 		
 	}
 
+	public List<Course> readCoursesMetadataByOwnerId(int userid,  int firstResult, int maxResults) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		Query q;
+		
+			q = entityManager.createQuery("SELECT a FROM Course a WHERE a.owner.id="+userid+" ORDER BY a.id");
+
+		q.setFirstResult(firstResult);
+		q.setMaxResults(maxResults);
+		return q.getResultList();
+	}
+
+	public List<FIREAdapter> readFIREAdaptersMetadataByOwnerId(int userid,  int firstResult, int maxResults) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		Query q;
+		
+			q = entityManager.createQuery("SELECT a FROM FIREAdapter a WHERE a.owner.id="+userid+" ORDER BY a.id");
+
+		q.setFirstResult(firstResult);
+		q.setMaxResults(maxResults);
+		return q.getResultList();
+	}
+
 
 	
 

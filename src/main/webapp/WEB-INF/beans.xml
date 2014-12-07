@@ -120,11 +120,13 @@
                 /services/api/repo/images/** = anon, rest
                 /services/api/repo/sessions/** = anon, rest
                 /services/api/repo/categories/** = anon, rest
-                /services/api/repo/admin/categories/** = userfilter, rest, roles[ROLE_ADMIN] 
+                /services/api/repo/admin/categories/** = userfilter , rest
                 /services/api/repo/widgets/** = anon, rest
                 /services/api/repo/admin/widgets/** = userfilter, rest
                 /services/api/repo/courses/** = anon, rest
+                /services/api/repo/admin/courses/** = userfilter, rest
                 /services/api/repo/fireadapters/** = anon, rest
+                /services/api/repo/admin/fireadapters/** = anon, rest
                 /services/api/repo/register/** = anon, rest
                 /services/api/repo/properties/** = userfilter, rest
                 /services/api/** = userfilter, rest

@@ -243,4 +243,16 @@ public class FStoreRepository {
 	}
 
 
+	public List<Course> getUserCourses(FStoreUser u) {
+		List<Course> ls = fstoreJpaController.readCoursesMetadataByOwnerId(u.getId(), 0, 100000);	
+		return ls;
+	}
+
+
+	public List<FIREAdapter> getUserFIREAdapters(FStoreUser u) {
+		List<FIREAdapter> ls = fstoreJpaController.readFIREAdaptersMetadataByOwnerId(u.getId(), 0, 100000);	
+		return ls;
+	}
+
+
 }

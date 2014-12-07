@@ -35,9 +35,20 @@ public class AjaxUserFilter extends UserFilter {
 	
 	
 	@Override
-	protected boolean isAccessAllowed(ServletRequest arg0, ServletResponse arg1, Object arg2) {
+	protected boolean isAccessAllowed(ServletRequest request, ServletResponse arg1, Object arg2) {
     	logger.info("=======> AjaxUserFilter: isAccessAllowed <=============");
-    	Boolean b = super.isAccessAllowed(arg0, arg1, arg2);
+    	Boolean b = super.isAccessAllowed(request, arg1, arg2);
+    	
+    	HttpServletRequest req = WebUtils.toHttp(request);        
+    	logger.info("=======> AjaxUserFilter:onAccessDenied <============= Method = "+ req.getMethod());
+    	
+        if (req.getMethod().equals("OPTIONS")){ //useful to pass CORS Options
+        	//usually for most browsers in OPTIONS there is no JSESSION ID cookie,
+        	//therefore there is a problem with the authentication
+        	//still bypassing the OPTIONS here seams not an authorization problem
+        	return true; 
+        }
+    	
     	logger.info("=======> AjaxUserFilter: isAccessAllowed = "+b);
 		return b;
 	}
