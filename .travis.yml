@@ -12,6 +12,9 @@ before_script:
 - "mysql -uroot -e \"DELETE FROM mysql.user WHERE User = 'travis';\""
 - "mysql -uroot -e \"FLUSH PRIVILEGES;\""  
 
+
+after_success:
+  - mvn clean cobertura:cobertura coveralls:report
   
 language: java
 script: "mvn clean -Pjetty.integration verify"
