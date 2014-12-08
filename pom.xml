@@ -264,6 +264,16 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+			
+			<plugin>
+			    <groupId>org.eluder.coveralls</groupId>
+			    <artifactId>coveralls-maven-plugin</artifactId>
+			    <version>3.0.1</version>
+			    <configuration>
+			        <repoToken>arlJdF3y6xmhMijC3Egs8u0rkK6fpG8Oi</repoToken>
+			    </configuration>
+			</plugin>
+			
 			</plugins>
 		</pluginManagement>
 		<plugins>
