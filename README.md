@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/ctranoris/forgestore.svg?branch=master)](https://travis-ci.org/ctranoris/forgestore)
+[![Documentation Status](https://readthedocs.org/projects/forgestore/badge/?version=latest)](https://readthedocs.org/projects/forgestore/?badge=latest)
 
 FORGEStore Web Service
 ==========
