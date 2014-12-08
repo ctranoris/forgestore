@@ -20,25 +20,25 @@ http://localhost:13000/fsapi/services/api/repo/
 
 Authenticate, Create Session
 ----------------------------
-curl -v -H "Content-Type: application/json" -X POST --data '{"username":"admin", "password":"changeme"}' http://localhost:13000/fsapi/services/api/repo/sessions
+    curl -v -H "Content-Type: application/json" -X POST --data '{"username":"admin", "password":"changeme"}' http://localhost:13000/fsapi/services/api/repo/sessions
 
-Response
-{
-    "id": 24,
-    "username": "admin",
-    "password": "",
-    "sessionId": "44d9e657-9c8a-423d-9015-e7cb81fa0257",
-    "user": {
-        "id": 1,
-        "organization": "",
-        "name": "FStore Administrator",
-        "email": "",
+    Response
+    {
+        "id": 24,
         "username": "admin",
-        "password": "TLnIqASP0CKUR3/LGkEZGg==",
-        "role": "ROLE_ADMIN",
-        "active": true
+        "password": "",
+        "sessionId": "44d9e657-9c8a-423d-9015-e7cb81fa0257",
+        "user": {
+            "id": 1,
+            "organization": "",
+            "name": "FStore Administrator",
+            "email": "",
+            "username": "admin",
+            "password": "TLnIqASP0CKUR3/LGkEZGg==",
+            "role": "ROLE_ADMIN",
+            "active": true
+        }
     }
-}
 
 in the following example JSESSIONID cookie value is equal to the sessionId (and JSESSIONID given from server). Must be present for authenticated requests
 
