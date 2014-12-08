@@ -55,6 +55,12 @@ Contribute
 - Source Code: https://github.com/ctranoris/forgestore
 
 
+Documentation
+-------------
+
+http://forgestore.readthedocs.org/
+
+
 Copyright
 ---------
 
