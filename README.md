@@ -21,12 +21,12 @@ Installation
 
 Current version needs a mysql database called fsdb already created:
 
-CREATE DATABASE IF NOT EXISTS fsdb DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-GRANT ALL PRIVILEGES ON fsdb.* TO 'forgestoredbuser'@'localhost' IDENTIFIED BY 'forgestorerp@zz'
+	CREATE DATABASE IF NOT EXISTS fsdb DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+	GRANT ALL PRIVILEGES ON fsdb.* TO 'forgestoredbuser'@'localhost' IDENTIFIED BY 'forgestorerp@zz'
 
 (remember to change these values for a production environment, also on [/src/main/resources/META-INF/persistence.xml] persistence.xml)
 
-Download and build $project by running:
+Download and build project by running:
 
     mvn clean -Pjetty.integration  verify
 
@@ -34,22 +34,24 @@ Download and build $project by running:
 This will perform some unit and integration test and create a jar to be installed in a jetty web server.
 
 For a quick smoke run:
+
 	 mvn clean -Pjetty.integration jetty:run
 	 
-	 and will listen on port 13000
+and will listen on port 13000
 	 
 There is also a cargo profile. To prepare a deployment description use:
+
 	mvn -Pcargo.run cargo:configure
 	mvn -Pcargo.run cargo:package
 	
-	and get the jetty-packaged folder
+and get the jetty-packaged folder
 	
 	
 Contribute
 ----------
 
-- Issue Tracker: github.com/$project/$project/issues
-- Source Code: github.com/$project/$project
+- Issue Tracker: https://github.com/ctranoris/forgestore/issues
+- Source Code: https://github.com/ctranoris/forgestore
 
 
 Copyright
