@@ -20,9 +20,11 @@ http://localhost:13000/fsapi/services/api/repo/
 
 Authenticate, Create Session
 ----------------------------
+
     curl -v -H "Content-Type: application/json" -X POST --data '{"username":"admin", "password":"changeme"}' http://localhost:13000/fsapi/services/api/repo/sessions
 
-    Response
+Response
+
     {
         "id": 24,
         "username": "admin",
@@ -46,9 +48,11 @@ In the following examples JSESSIONID cookie value is equal to the sessionId (and
 Categories
 ----------
 GET all categories
+
     curl -v -H "Content-Type: application/json" http://localhost:13000/fsapi/services/api/repo/categories
-    
-    Response sample:
+
+Response sample:
+
     [{ {{
         "id": 2,
         "name": "Multimedia",
@@ -63,9 +67,11 @@ management of categories only if authorized, only admin role
 
 
 GET all categories
+
     curl -v -H "Content-Type: application/json" http://localhost:13000/fsapi/services/api/repo/admin/categories
 
 Add a new category (if authorized, only admin role)
+
     curl -v -H "Content-Type: application/json" -X POST --data '{"name":"NewCateg"}' --cookie "JSESSIONID=5dfe834e-6024-4806-9caf-7bbbd73c68f2"  http://localhost:13000/fsapi/services/api/repo/admin/categories
 
 JSESSIONID is the same value returned from sessionId
@@ -82,9 +88,11 @@ Response sample:
     }
 
 Update a category(if authorized, only admin role)
+
     curl -H "Content-Type: application/json" -X PUT --data '{"id":"10", "name":"NewCategNAMEX"}'  http://localhost:13000/fsapi/services/api/repo/admin/categories/10
 
 Response sample:
+
     {
         "id": 10,
         "name": "NewCategNAMEX",
@@ -98,17 +106,20 @@ Response sample:
 Users
 -----
 Getting all users (if authorized, only admin role)
+
     curl -v -H "Content-Type: application/json" http://localhost:13000/fsapi/services/api/repo/users/
 
 Widgets
 -------
 ### Get all widgets
+
     curl -v -H "Content-Type: application/json" http://localhost:13000/fsapi/services/api/repo/widgets/
 
 ## Management of widgets only if authorized
 
 ### Add widget 
 (multipart/form-data)
+
     curl -v -include --form prodname="MyAPI Widget" --form categories=3,1 --form shortDescription="shortde" --form longDescription="a longDescription" --form version="1.2.3a" --form prodIcon=@course_smallico.PNG --cookie "JSESSIONID=2ba937c5-e93e-4c68-8ff5-99dea2d40bb7"  http://localhost:13000/fsapi/services/api/repo/admin/widgets
 
 Response:
@@ -160,6 +171,7 @@ Response:
     curl -v -X PUT -H "Content-Type: multipart/form-data" -include --form userid=1 --form prodname="MyAPI WidgetNew name" --form categories=3,1 --form shortDescription="shortde" --form longDescription="a longDescription" --form version="1.2.3a" --form prodIcon=@course_smallico.PNG --cookie "JSESSIONID=928f32fb-16e4-4b30-90f9-50235f9c197f"  http://localhost:13000/fsapi/services/api/repo/admin/widgets/19
 
 Response:
+
     {
         "id": 19,
         "owner": {
