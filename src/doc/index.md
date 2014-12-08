@@ -1,14 +1,26 @@
+FORGEStore Web Service
+==========
+
+FORGEStore is a RESTful marketplace service for a FORGEBox installation.
+FORGEStore contains shared widgets, FORGEBox services, FIRE adapters and shared interactive courses.
+
+A running instance can be found at http://www.forgestore.eu
+
+
+REST API
+--------
+
 All FORGEStore API,  Produces("application/json") and Consumes("application/json") except some POSTs that Consumes("multipart/form-data")
 All requests should be to the repo of the webservice. 
 For example if you have context path /fsapi for the webservice then put the full path as /fsapi/services/api/repo
 
-The following examples are against the forgestore.eu API endpoind
-http://www.forgestore.eu:8080/fsapi/services/api/repo/
-
+The following examples are against the  API endpoind
+http://localhost:13000/fsapi/services/api/repo/
 
 
 Authenticate, Create Session
-curl -v -H "Content-Type: application/json" -X POST --data '{"username":"admin", "password":"changeme"}' http://www.forgestore.eu:8080/fsapi/services/api/repo/sessions
+----------------------------
+curl -v -H "Content-Type: application/json" -X POST --data '{"username":"admin", "password":"changeme"}' http://localhost:13000/fsapi/services/api/repo/sessions
 
 Response
 {
@@ -32,9 +44,9 @@ in the following example JSESSIONID cookie value is equal to the sessionId (and 
 
 
 Categories
-
+----------
 GET all categories
-curl -v -H "Content-Type: application/json" http://www.forgestore.eu:8080/fsapi/services/api/repo/categories
+curl -v -H "Content-Type: application/json" http://localhost:13000/fsapi/services/api/repo/categories
 
 Response sample:
 [{ {{
@@ -51,7 +63,7 @@ management of categories only if authorized, only admin role
 
 
 GET all categories
-curl -v -H "Content-Type: application/json" http://www.forgestore.eu:8080/fsapi/services/api/repo/admin/categories
+curl -v -H "Content-Type: application/json" http://localhost:13000/fsapi/services/api/repo/admin/categories
 
 Add a new category (if authorized, only admin role)
 curl -v -H "Content-Type: application/json" -X POST --data '{"name":"NewCateg"}' --cookie "JSESSIONID=5dfe834e-6024-4806-9caf-7bbbd73c68f2"  http://localhost:13000/fsapi/services/api/repo/admin/categories
@@ -84,18 +96,19 @@ Response sample:
 
 
 Users
-
+-----
 Getting all users (if authorized, only admin role)
-curl -v -H "Content-Type: application/json" http://www.forgestore.eu:8080/fsapi/services/api/repo/users/
+curl -v -H "Content-Type: application/json" http://localhost:13000/fsapi/services/api/repo/users/
 
 Widgets
+-------
+### Get all widgets
+curl -v -H "Content-Type: application/json" http://localhost:13000/fsapi/services/api/repo/widgets/
 
-get all widgets
-curl -v -H "Content-Type: application/json" http://www.forgestore.eu:8080/fsapi/services/api/repo/widgets/
+## Management of widgets only if authorized
 
-Management of widgets only if authorized
-
-Add widget example (multipart/form-data)
+### Add widget 
+(multipart/form-data)
 curl -v -include --form prodname="MyAPI Widget" --form categories=3,1 --form shortDescription="shortde" --form longDescription="a longDescription" --form version="1.2.3a" --form prodIcon=@course_smallico.PNG --cookie "JSESSIONID=2ba937c5-e93e-4c68-8ff5-99dea2d40bb7"  http://localhost:13000/fsapi/services/api/repo/admin/widgets
 
 Response:
@@ -142,7 +155,8 @@ Response:
 
 
 
-Update a Widget
+### Update a Widget
+
 curl -v -X PUT -H "Content-Type: multipart/form-data" -include --form userid=1 --form prodname="MyAPI WidgetNew name" --form categories=3,1 --form shortDescription="shortde" --form longDescription="a longDescription" --form version="1.2.3a" --form prodIcon=@course_smallico.PNG --cookie "JSESSIONID=928f32fb-16e4-4b30-90f9-50235f9c197f"  http://localhost:13000/fsapi/services/api/repo/admin/widgets/19
 
 Response:
