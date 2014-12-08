@@ -14,7 +14,7 @@ before_script:
 
 
 after_success:
-  - mvn clean cobertura:cobertura coveralls:report
+- "mvn clean cobertura:cobertura coveralls:report"
   
 language: java
 script: "mvn clean -Pjetty.integration verify"
