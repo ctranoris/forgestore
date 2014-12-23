@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/ctranoris/forgestore.svg?branch=master)](https://travis-ci.org/ctranoris/forgestore)
 [![Documentation Status](https://readthedocs.org/projects/forgestore/badge/?version=latest)](https://readthedocs.org/projects/forgestore/?badge=latest)
+[![Coverage Status](https://coveralls.io/repos/ctranoris/forgestore/badge.png)](https://coveralls.io/r/ctranoris/forgestore)
 
 FORGEStore Web Service
 ==========
@@ -53,6 +54,12 @@ Contribute
 
 - Issue Tracker: https://github.com/ctranoris/forgestore/issues
 - Source Code: https://github.com/ctranoris/forgestore
+
+
+Documentation
+-------------
+
+http://forgestore.readthedocs.org/
 
 
 Copyright
