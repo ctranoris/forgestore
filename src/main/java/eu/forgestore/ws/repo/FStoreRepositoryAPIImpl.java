@@ -25,12 +25,14 @@ import eu.forgestore.ws.model.Product;
 import eu.forgestore.ws.model.UserSession;
 import eu.forgestore.ws.model.Widget;
 import eu.forgestore.ws.util.EmailUtil;
+import eu.forgestore.ws.util.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -329,7 +331,23 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 
 
 	
-	private Product addNewProductData(Product prod, int userid, String prodName, String shortDescription, String longDescription, String version,
+	/**
+	 * add a new product to repository
+	 * @param prod an object that will be returned with the new result
+	 * @param userid id of the owner
+	 * @param prodName displayed name
+	 * @param shortDescription short teaser description
+	 * @param longDescription long product description
+	 * @param version current version 
+	 * @param categories comma separated IDs of categories
+	 * @param image a logo to display
+	 * @param bunFile an associated packaged file
+	 * @param screenshots optional screenshots
+	 * @return a product object
+	 */
+	private Product addNewProductData(Product prod, int userid, 
+			String prodName, String shortDescription, 
+			String longDescription, String version,
 			String categories, Attachment image, Attachment bunFile, List<Attachment> screenshots) {
 		String uuid = UUID.randomUUID().toString();
 		
@@ -970,6 +988,70 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 		return Response.ok().entity(sm).build();
 	}
 	
+	@POST
+	//@Path("/users/{userid}/widgets/packaged")
+	@Path("/admin/widgets/packaged")
+	@Consumes("multipart/form-data")
+	@Produces("application/json")
+	public Response addWidgetPackaged(  List<Attachment> ats){
+		
+//		MUST STORE Sessions and the from Session ID to get userid
+//		must show only widges owned by user Session. must find user from sessionid
+
+
+		FStoreUser u = fstoreRepositoryRef.getUserBySessionId( SecurityUtils.getSubject().getSession().getId().toString() );
+		int userid = u.getId();
+		
+		Widget widg = new Widget();
+		widg.setURL(  getAttachmentStringValue("url", ats) );
+		widg = (Widget) addNewProductData(widg, userid, 
+				getAttachmentStringValue("prodname", ats), 
+				getAttachmentStringValue("shortDescription", ats), 
+				getAttachmentStringValue("longDescription", ats), 
+				getAttachmentStringValue("version", ats), 
+				getAttachmentStringValue("categories", ats), //categories are comma separated Ids
+				getAttachmentByName("prodIcon", ats), 
+				getAttachmentByName("prodFile", ats), 
+				getListOfAttachmentsByName("screenshots", ats));
+		
+		Attachment widgetPackagedFile = getAttachmentByName("prodFile", ats);
+		if (widgetPackagedFile!=null){
+			String widgetFileNamePosted = getFileName(widgetPackagedFile.getHeaders());
+			logger.info("widgetFileNamePosted = " + widgetFileNamePosted);
+			
+			if (!widgetFileNamePosted.equals("")) {
+				
+				File destFile = new File( METADATADIR + widg.getUuid() + File.separator+widgetFileNamePosted );
+				java.nio.file.Path targetPath = destFile.toPath();
+				
+				String cmdStr = "tar --strip-components=1 -xvzf " + targetPath + " -C " + targetPath.getParent() + File.separator ;
+
+				logger.info("cmdStr = " + cmdStr);
+				
+				Utils.executeSystemCommand(cmdStr);
+				
+				
+			}
+		}
+
+		URI endpointUrl = uri.getBaseUri();
+		
+		String endpointUrlString;
+		try {
+			endpointUrlString = endpointUrl.toURL().getProtocol()+"://"+endpointUrl.toURL().getHost() ;
+			if (endpointUrl.toURL().getPort()>0){
+				endpointUrlString +=":"+endpointUrl.toURL().getPort();
+			}
+			String tempDir = endpointUrlString+ File.separator+ "static"+ File.separator +  widg.getUuid() + File.separator  ;
+			widg.setURL(  tempDir );	
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+		fstoreRepositoryRef.updateProductInfo(widg);		
+		return Response.ok().entity(widg).build();
+	}
 
 	@DELETE
 	@Path("/admin/widgets/{widgetid}")
@@ -1106,7 +1188,7 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 				getAttachmentStringValue("categories", ats), //categories are comma separated Ids
 				getAttachmentByName("prodIcon", ats), 
 				getAttachmentByName("prodFile", ats), 
-				getListOfAttachmentsByName("screenshots", ats));
+				getListOfAttachmentsByName("screenshots", ats) );
 		
 		return Response.ok().entity(c).build();
 	}
@@ -1352,7 +1434,7 @@ public class FStoreRepositoryAPIImpl implements IFStoreRepositoryAPI {
 				getAttachmentStringValue("categories", ats), //categories are comma separated Ids
 				getAttachmentByName("prodIcon", ats), 
 				getAttachmentByName("prodFile", ats), 
-				getListOfAttachmentsByName("screenshots", ats));
+				getListOfAttachmentsByName("screenshots", ats) );
 		
 		return Response.ok().entity(sm).build();
 
