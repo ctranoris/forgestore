@@ -175,16 +175,17 @@ Response:
 
 ### Add widget 
 (multipart/form-data) with params:
-widget name, prodname="MyAPI Widget" 
-endpoint url that services the widget, url="http://mywidget.example.com/endpoint" 
-Categories that belongs, comma separated category IDs, categories=3,1 
-Short teaser, shortDescription="shortde" 
-Description of widget, longDescription="a longDescription" 
-A Version, version="1.2.3a" 
-A Widget Logo, prodIcon=@course_smallico.PNG 
-The session auth cookie, cookie "JSESSIONID=2ba937c5-e93e-4c68-8ff5-99dea2d40bb7"  
-The endpoint to call, http://localhost:13000/fsapi/services/api/repo/admin/widgets
-Example:
+
+	widget name, prodname="MyAPI Widget" 
+	endpoint url that services the widget, url="http://mywidget.example.com/endpoint" 
+	Categories that belongs, comma separated category IDs, categories=3,1 
+	Short teaser, shortDescription="shortde" 
+	Description of widget, longDescription="a longDescription" 
+	A Version, version="1.2.3a" 
+	A Widget Logo, prodIcon=@course_smallico.PNG 
+	The session auth cookie, cookie "JSESSIONID=2ba937c5-e93e-4c68-8ff5-99dea2d40bb7"  
+	The endpoint to call, http://localhost:13000/fsapi/services/api/repo/admin/widgets
+	Example:
 
     curl -v -include --form prodname="MyAPI Widget" --form url="http://mywidget.example.com/endpoint" --form categories=3,1 --form shortDescription="shortde" --form longDescription="a longDescription" --form version="1.2.3a" --form prodIcon=@course_smallico.PNG --cookie "JSESSIONID=2ba937c5-e93e-4c68-8ff5-99dea2d40bb7"  http://localhost:13000/fsapi/services/api/repo/admin/widgets
 
@@ -233,25 +234,26 @@ Response:
 
 
 ### Add widget in a package (.tar.gz). The widget can be hosted in the service under a static url. An index.html must be present
-(multipart/form-data)
+
 
 (multipart/form-data) with params:
-widget name, prodname="MyAPI Widget" 
-endpoint url that services the widget, url="http://mywidget.example.com/endpoint" 
-Categories that belongs, comma separated category IDs, categories=3,1 
-Short teaser, shortDescription="shortde" 
-Description of widget, longDescription="a longDescription" 
-A Version, version="1.2.3a" 
-A Widget Logo, prodIcon=@course_smallico.PNG 
-The packaged widget content, prodFile=@mywidget.tar.gz
-The session auth cookie, cookie "JSESSIONID=2ba937c5-e93e-4c68-8ff5-99dea2d40bb7"  
-The endpoint to call, http://localhost:13000/fsapi/services/api/repo/admin/widgets
-Example:
+	widget name, prodname="MyAPI Widget" 
+	endpoint url that services the widget, url="http://mywidget.example.com/endpoint" 
+	Categories that belongs, comma separated category IDs, categories=3,1 
+	Short teaser, shortDescription="shortde" 
+	Description of widget, longDescription="a longDescription" 
+	A Version, version="1.2.3a" 
+	A Widget Logo, prodIcon=@course_smallico.PNG 
+	The packaged widget content, prodFile=@mywidget.tar.gz
+	The session auth cookie, cookie "JSESSIONID=2ba937c5-e93e-4c68-8ff5-99dea2d40bb7"  
+	The endpoint to call, http://localhost:13000/fsapi/services/api/repo/admin/widgets
+	Example:
 
 	curl -v -include --form prodname="MyAPI Widget" --form categories=3,1 --form shortDescription="shortde" --form longDescription="a longDescription" --form version="1.2.3a" --form prodIcon=@course_smallico.PNG --cookie "JSESSIONID=be5c5693-def5-4c64-8460-3044856fe1f9" --form prodFile=@mywidget.tar.gz  http://localhost:13000/fsapi/services/api/repo/admin/widgets/packaged
 
 
 Response:
+
 	{
 	    "id": 25,
 	    "owner": {
