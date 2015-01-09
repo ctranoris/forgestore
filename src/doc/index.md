@@ -14,7 +14,6 @@ with username=test, password=test
 and a running staging web frontend at:
 http://83.212.106.218/fsui_staging/forgestore-webui/src/
 
-
 REST API
 --------
 
