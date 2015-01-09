@@ -5,6 +5,14 @@ FORGEStore is a RESTful marketplace service for a FORGEBox installation.
 FORGEStore contains shared widgets, FORGEBox services, FIRE adapters and shared interactive courses.
 
 A running instance can be found at http://www.forgestore.eu
+With the API endpoint at http://www.forgestore.eu:8080/fsapi/
+
+If you would like to experiment with the FORGEStore API there is a staging instance at:
+http://83.212.106.218:8080/fsapi_staging/
+with username=test, password=test
+
+and a running staging web frontend at:
+http://83.212.106.218/fsui_staging/forgestore-webui/src/
 
 
 REST API
@@ -14,8 +22,11 @@ All FORGEStore API,  Produces("application/json") and Consumes("application/json
 All requests should be to the repo of the webservice. 
 For example if you have context path /fsapi for the webservice then put the full path as /fsapi/services/api/repo
 
-The following examples are against the  API endpoind
+The following examples are against the  API endpoint
 http://localhost:13000/fsapi/services/api/repo/
+
+
+
 
 
 Authenticate, Create Session
@@ -237,6 +248,7 @@ Response:
 
 
 (multipart/form-data) with params:
+
 	widget name, prodname="MyAPI Widget" 
 	endpoint url that services the widget, url="http://mywidget.example.com/endpoint" 
 	Categories that belongs, comma separated category IDs, categories=3,1 
